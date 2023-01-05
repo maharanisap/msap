@@ -1,0 +1,7 @@
+adrNode newNode (infotype x){
+  adrNode P = new node;
+  info(P) = x;
+  left(P) = nil;
+  right(P) = nil;
+  return P;
+}
