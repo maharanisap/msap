@@ -1,7 +1,159 @@
-adrNode newNode (infotype x){
-  adrNode P = new node;
-  info(P) = x;
-  left(P) = nil;
-  right(P) = nil;
-  return P;
+#ifndef TPMOD15_H_INCLUDED
+#define TPMOD15_H_INCLUDED
+#include <iostream>
+using namespace std;
+
+#define left(P) (P)->left
+#define right(P) (P)->right
+#define info(P) (P)->info
+
+typedef int infotype;
+typedef struct node *adrNode;
+
+struct node{
+    infotype info;
+    adrNode left;
+    adrNode right;
+};
+
+typedef adrNode tree;
+
+adrNode newNode(infotype x);
+adrNode findNode(adrNode root, infotype x);
+void insertNode(adrNode &root, adrNode p);
+void printPreOrder(adrNode root);
+void printDescendant(adrNode root, infotype x);
+int sumNode(adrNode root);
+int countLeaves(adrNode root);
+int heightTree(adrNode root);
+
+#endif // TPMOD15_H_INCLUDED
+
+=== cpp ===
+
+#include "tpmod15.h"
+
+adrNode newNode(infotype x){
+    adrNode P = new node;
+    info(P) = x;
+    left(P) = NULL;
+    right(P) = NULL;
+    return P;
 }
+
+adrNode findNode(adrNode root, infotype x){
+    if(root == NULL){
+        return NULL;
+    } else {
+        if (x < info(root)){
+            return findNode(left(root), x);
+        } else if (x > info(root)){
+            return findNode(right(root), x);
+        } else {
+            return root;
+        }
+    }
+}
+
+void insertNode(adrNode &root, adrNode P){
+    if(root == NULL){
+        root = P;
+    } else {
+        if (info(P) < info(root)){
+            insertNode(left(root), P);
+        } else if (info(P) > info(root)){
+            insertNode(right(root), P);
+        } else {
+            cout << "Angka sudah tersedia" << endl;
+        }
+    }
+}
+
+void printPreOrder(adrNode root){
+    if(root != NULL){
+        if(root != NULL){
+            cout << info(root)<< " ";
+        }
+        printPreOrder(left(root));
+        printPreOrder(right(root));
+    }
+}
+
+void printDescendant(adrNode root, infotype x){
+    adrNode Q = findNode(root, x);
+    if(Q != NULL){
+        adrNode Z = left(Q);
+        adrNode X = right(Q);
+        printPreOrder(Z);
+        printPreOrder(X);
+    }else{
+        cout << "Node yang dicari tidak tersedia" << endl;
+    }
+}
+
+int sumNode(adrNode root){
+    if(root == NULL){
+        return 0;
+    } else {
+        return info(root)+sumNode(left(root)) + sumNode(right(root));
+    }
+}
+
+int countLeaves(adrNode root){
+    if(root == NULL){
+        return 0;
+    }
+    if (left(root) == NULL && right(root) == NULL){
+        return 1;
+    } else {
+        return countLeaves(left(root)) + countLeaves(right(root));
+    }
+}
+
+int heightTree(adrNode root){
+    if(root == NULL){
+        return 0;
+    } else {
+        int ldepth = heightTree(left(root));
+        int rdepth = heightTree(right(root));
+        return max(ldepth, rdepth) + 1;
+    }
+}
+
+=== main cpp ===
+
+#include <iostream>
+#include "tpmod15.h"
+using namespace std;
+
+int main()
+{
+  cout << "====================================================" << endl;
+  int x[9] = {5, 3, 9, 10, 4, 7, 1, 8, 6};
+  for(int i = 0; i < 9; i++){
+    cout << x[i] << " ";
+  }
+  cout << endl << endl;
+
+  tree tree = NULL;
+  adrNode P;
+
+  for(int j = 0; j < 9; j++){
+    P = newNode(x[j]);
+    insertNode(tree, P);
+  }
+
+  cout << "Pre Order\t\t: ";
+  printPreOrder(tree);
+  cout << endl << endl;
+
+  cout << "Descendent of Node 9 \t: ";
+  printDescendant(tree, 9);
+  cout << endl << endl;
+
+  cout << "Sum of BST Info\t\t: " << sumNode(tree) << endl;
+  cout << "Number of Leaves\t: " << countLeaves(tree) << endl;
+  cout << "Height of tree\t\t: " << heightTree(tree) << endl;
+  cout << "====================================================" << endl;
+}
+
